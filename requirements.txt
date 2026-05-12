@@ -3,3 +3,4 @@ spotipy
 pandas
 requests
 python-dotenv
+gunicorn
