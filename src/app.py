@@ -1,5 +1,10 @@
 from flask import Flask, redirect, request, session, jsonify, render_template
+
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
 from SpotifyCall import compare_genres_to_CSV, compile_genres
+
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
