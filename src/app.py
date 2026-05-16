@@ -12,6 +12,8 @@ import os
 app = Flask(__name__, template_folder="templates")
 
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = True
 
 def get_auth_manager(cache_handler=None):
     return SpotifyOAuth(
@@ -39,7 +41,7 @@ def callback():
     auth_manager = get_auth_manager()
     try:
         token = auth_manager.get_access_token(code, as_dict=True)
-        session["token"] = token
+        session["token"] = token  # stored per-user session
     except Exception as e:
         print(f"Auth error: {e}")
         return redirect("/")
