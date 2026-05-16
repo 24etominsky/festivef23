@@ -53,7 +53,7 @@ def results():
         return redirect("/login")
 
     sp = spotipy.Spotify(auth=token["access_token"])
-    top_artists = sp.current_user_top_artists(limit=5, time_range="medium_term")
+    top_artists = sp.current_user_top_artists(limit=50, time_range="medium_term")
     names = [a["name"] for a in top_artists["items"]]
     genres = compile_genres(names)
     matches, genre_matches = compare_genres_to_CSV(genres)
