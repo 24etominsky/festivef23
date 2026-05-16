@@ -9,7 +9,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
+
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 def get_auth_manager(cache_handler=None):
@@ -49,6 +50,15 @@ def results():
     matches, genre_matches = compare_genres_to_CSV(genres)
 
     return jsonify({"matches": matches, "genreMatches": genre_matches})
+
+@app.route("/debug")
+def debug():
+    return jsonify({
+        "cwd": os.getcwd(),
+        "file": __file__,
+        "template_folder": app.template_folder,
+        "files": os.listdir(os.getcwd())
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

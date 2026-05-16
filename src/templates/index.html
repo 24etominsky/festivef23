@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Festival Match</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; }
+        button { background: #1DB954; color: white; border: none; padding: 12px 24px;
+                 font-size: 16px; border-radius: 24px; cursor: pointer; }
+        button:hover { background: #1aa34a; }
+        .artist { display: flex; justify-content: space-between; padding: 10px 0;
+                  border-bottom: 1px solid #eee; }
+        .score { font-weight: bold; color: #1DB954; }
+    </style>
+</head>
+<body>
+    <h1>🎪 Festival Match</h1>
+    <p>See which artists at Hinterland match your Spotify taste.</p>
+
+    <div id="login-section">
+        <button onclick="window.location.href='/login'">Login with Spotify</button>
+    </div>
+
+    <div id="results-section" style="display:none;">
+        <h2>Your Matches</h2>
+        <div id="artist-list"></div>
+    </div>
+
+    <script>
+        // Check if we have results in the URL (redirected from /results)
+        async function loadResults() {
+            const res = await fetch('/results');
+            if (res.redirected || !res.ok) return; // not logged in yet
+
+            const data = await res.json();
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('results-section').style.display = 'block';
+
+            const list = document.getElementById('artist-list');
+            data.matches.forEach(match => {
+                const [name, score] = match.split(':');
+                const div = document.createElement('div');
+                div.className = 'artist';
+                div.innerHTML = `<span>${name}</span><span class="score">${score} pts</span>`;
+                list.appendChild(div);
+            });
+        }
+
+        loadResults();
+    </script>
+</body>
+</html>

@@ -33,7 +33,7 @@ def compile_genres(list_of_artists):
         # print(genresList)
     return genresList
 
-def get_users_top_genres():
+def get_users_top_genres(sp):
     top_artists = sp.current_user_top_artists(limit=50, time_range="short_term")
     # print(json.dumps(top_artists, indent=4))
     names = set()
