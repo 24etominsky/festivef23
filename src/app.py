@@ -62,7 +62,9 @@ def results():
     parsed = [{"name": m.split(":")[0], "score": int(m.split(":")[1])} for m in matches]
     parsed.sort(key=lambda x: x["score"], reverse=True)
 
-    return render_template("results.html", matches=parsed, top_artists=names)
+    top_score = parsed[0]["score"] if parsed else 1
+
+    return render_template("results.html", matches=parsed, top_artists=names, top_score=top_score)
 
 @app.route("/debug")
 def debug():

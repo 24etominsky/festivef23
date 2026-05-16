@@ -69,9 +69,24 @@
             font-weight: 600;
         }
 
-        .score.high { background: #1DB954; color: white; }
-        .score.mid { background: #2a5c3a; color: #1DB954; }
-        .score.zero { background: #222; color: #555; }
+        /*.score.high { background: #1DB954; color: white; }*/
+        /*.score.mid { background: #2a5c3a; color: #1DB954; }*/
+        /*.score.zero { background: #222; color: #555; }*/
+
+        {% set intensity = (artist.score / top_score * 255) | int %}
+        {% if artist.score == 0 %}
+            <span class="score" style="background:#222; color:#555; border:1px solid #222; padding:4px 14px; border-radius:20px; font-size:13px; font-weight:600;">
+                no match
+            </span>
+        {% else %}
+            <span class="score" style="
+                background: rgba(29, {{ intensity }}, 84, 0.2);
+                color: rgb(29, {{ intensity }}, 84);
+                border: 1px solid rgba(29, {{ intensity }}, 84, 0.4);
+                padding:4px 14px; border-radius:20px; font-size:13px; font-weight:600;">
+                {{ artist.score }} pts
+            </span>
+        {% endif %}
 
         .back {
             display: inline-block;
