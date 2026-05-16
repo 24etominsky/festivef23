@@ -4,45 +4,191 @@
     <meta charset="UTF-8">
     <title>Festival Match</title>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 60px auto; padding: 0 20px; }
-        button { background: #1DB954; color: white; border: none; padding: 12px 24px;
-                 font-size: 16px; border-radius: 24px; cursor: pointer; }
-        button:hover { background: #1aa34a; }
-        .artist { display: flex; justify-content: space-between; padding: 10px 0;
-                  border-bottom: 1px solid #eee; }
-        .score { font-weight: bold; color: #1DB954; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1DB954, #69e89b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 18px;
+            margin-bottom: 48px;
+            max-width: 400px;
+        }
+
+        .login-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 16px 36px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .login-btn:hover {
+            background: #1aa34a;
+            transform: scale(1.05);
+        }
+
+        .spotify-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .footer {
+            margin-top: 48px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        /* Results page */
+        .results-container {
+            max-width: 600px;
+            width: 100%;
+            padding: 40px 20px;
+        }
+
+        .results-container h2 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .results-subtitle {
+            color: #aaa;
+            margin-bottom: 32px;
+        }
+
+        .artist-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+
+        .artist-card:hover { border-color: #1DB954; }
+
+        .artist-rank {
+            color: #555;
+            font-size: 14px;
+            width: 28px;
+        }
+
+        .artist-name {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            margin-left: 12px;
+        }
+
+        .artist-score {
+            background: #1DB954;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .artist-score.zero {
+            background: #333;
+            color: #666;
+        }
+
+        .loading {
+            color: #aaa;
+            font-size: 18px;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
-    <h1>🎪 Festival Match</h1>
-    <p>See which artists at Hinterland match your Spotify taste.</p>
-
-    <div id="login-section">
-        <button onclick="window.location.href='/login'">Login with Spotify</button>
+    <div id="login-view" class="container">
+        <div class="logo">🎪</div>
+        <h1>Festival Match</h1>
+        <p class="subtitle">Find out which Hinterland artists match your Spotify listening history</p>
+        <a href="/login" class="login-btn">
+            <svg class="spotify-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            Login with Spotify
+        </a>
+        <p class="footer">We only read your top artists — nothing else</p>
     </div>
 
-    <div id="results-section" style="display:none;">
-        <h2>Your Matches</h2>
+    <div id="results-view" class="results-container" style="display:none;">
+        <h2>🎪 Your Matches</h2>
+        <p class="results-subtitle">Hinterland artists ranked by how well they match your taste</p>
         <div id="artist-list"></div>
     </div>
 
+    <div id="loading-view" style="display:none;" class="container">
+        <div class="logo">🎵</div>
+        <p class="loading">Analyzing your taste...</p>
+    </div>
+
     <script>
-        // Check if we have results in the URL (redirected from /results)
         async function loadResults() {
             const res = await fetch('/results');
-            if (res.redirected || !res.ok) return; // not logged in yet
+            if (!res.ok) return;
+
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('loading-view').style.display = 'block';
 
             const data = await res.json();
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('results-section').style.display = 'block';
+
+            document.getElementById('loading-view').style.display = 'none';
+            document.getElementById('results-view').style.display = 'block';
 
             const list = document.getElementById('artist-list');
-            data.matches.forEach(match => {
+            data.matches.forEach((match, i) => {
                 const [name, score] = match.split(':');
-                const div = document.createElement('div');
-                div.className = 'artist';
-                div.innerHTML = `<span>${name}</span><span class="score">${score} pts</span>`;
-                list.appendChild(div);
+                const card = document.createElement('div');
+                card.className = 'artist-card';
+                card.innerHTML = `
+                    <span class="artist-rank">#${i + 1}</span>
+                    <span class="artist-name">${name}</span>
+                    <span class="artist-score ${score === '0' ? 'zero' : ''}">${score} pts</span>
+                `;
+                list.appendChild(card);
             });
         }
 

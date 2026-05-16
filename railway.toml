@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "gunicorn src.app:app"
+startCommand = "gunicorn --chdir src app:app"
