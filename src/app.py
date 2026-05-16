@@ -29,12 +29,21 @@ def login():
     auth_manager = get_auth_manager()
     return redirect(auth_manager.get_authorize_url())
 
+
 @app.route("/callback")
 def callback():
     code = request.args.get("code")
+    if not code:
+        return redirect("/")
+
     auth_manager = get_auth_manager()
-    token = auth_manager.get_access_token(code)
-    session["token"] = token
+    try:
+        token = auth_manager.get_access_token(code, as_dict=True)
+        session["token"] = token
+    except Exception as e:
+        print(f"Auth error: {e}")
+        return redirect("/")
+
     return redirect("/results")
 
 @app.route("/results")
@@ -49,7 +58,11 @@ def results():
     genres = compile_genres(names)
     matches, genre_matches = compare_genres_to_CSV(genres)
 
-    return jsonify({"matches": matches, "genreMatches": genre_matches})
+    # Convert "Artist:score" strings to a list of dicts and sort
+    parsed = [{"name": m.split(":")[0], "score": int(m.split(":")[1])} for m in matches]
+    parsed.sort(key=lambda x: x["score"], reverse=True)
+
+    return render_template("results.html", matches=parsed, top_artists=names)
 
 @app.route("/debug")
 def debug():
