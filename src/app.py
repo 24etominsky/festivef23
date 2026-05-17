@@ -24,7 +24,7 @@ def get_auth_manager(cache_handler=None):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("templates/index.html")
 
 @app.route("/login")
 def login():
