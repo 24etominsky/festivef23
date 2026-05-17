@@ -40,9 +40,9 @@ def compile_genres(list_of_artists):
 
 def get_spotify_url(artist_name, sp):
     try:
-        result = sp.search(q=artist_name, type="artist", limit=1)
+        result = sp.search(q=f'artist:"{artist_name}"', type="artist", limit=1)
         items = result["artists"]["items"]
-        if items:
+        if items and items[0]["name"].lower() == artist_name.lower():
             return items[0]["external_urls"]["spotify"]
     except Exception:
         pass
