@@ -3,7 +3,7 @@ from flask import Flask, redirect, request, session, jsonify, render_template
 import sys
 import os
 sys.path.append(os.path.dirname(__file__))
-from SpotifyCall import compare_genres_to_CSV, compile_genres
+from SpotifyCall import compare_genres_to_CSV, compile_genres, get_spotify_url
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
@@ -58,15 +58,11 @@ def results():
     top_artists = sp.current_user_top_artists(limit=50, time_range="medium_term")
     names = [a["name"] for a in top_artists["items"]]
     genres = compile_genres(names)
-    matches, genre_matches = compare_genres_to_CSV(genres)
+    matches = compare_genres_to_CSV(genres, sp=sp)
 
-    # Convert "Artist:score" strings to a list of dicts and sort
-    parsed = [{"name": m.split(":")[0], "score": int(m.split(":")[1])} for m in matches]
-    parsed.sort(key=lambda x: x["score"], reverse=True)
+    top_score = matches[0]["score"] if matches else 1
 
-    top_score = parsed[0]["score"] if parsed else 1
-
-    return render_template("results.html", matches=parsed, top_artists=names, top_score=top_score)
+    return render_template("results.html", matches=matches, top_artists=names, top_score=top_score)
 
 @app.route("/debug")
 def debug():

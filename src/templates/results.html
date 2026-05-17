@@ -14,7 +14,7 @@
             padding: 40px 20px;
         }
 
-        .container { max-width: 600px; margin: 0 auto; }
+        .container { max-width: 640px; margin: 0 auto; }
 
         h1 {
             font-size: 36px;
@@ -26,78 +26,115 @@
         }
 
         .based-on {
-            color: #666;
-            font-size: 14px;
+            color: #555;
+            font-size: 13px;
             margin-bottom: 32px;
+            line-height: 1.6;
         }
 
-        .based-on span {
-            color: #1DB954;
-        }
+        .based-on span { color: #888; }
 
         .artist-card {
             display: flex;
             align-items: center;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
+            gap: 12px;
+            background: #141414;
+            border: 1px solid #222;
             border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 10px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
             transition: border-color 0.2s;
         }
 
-        .artist-card:hover { border-color: #1DB954; }
+        .artist-card:hover { border-color: #2a2a2a; }
 
         .rank {
-            color: #555;
-            font-size: 13px;
-            width: 28px;
+            color: #444;
+            font-size: 12px;
+            width: 24px;
             flex-shrink: 0;
+            text-align: right;
+        }
+
+        .info {
+            flex: 1;
+            min-width: 0;
         }
 
         .name {
-            flex: 1;
-            font-size: 16px;
-            font-weight: 500;
-            margin-left: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 6px;
+        }
+
+        .genre-tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(29, 185, 84, 0.12);
+            color: #1DB954;
+            border: 1px solid rgba(29, 185, 84, 0.25);
+        }
+
+        .right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .score {
-            padding: 4px 14px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
         }
 
-        /*.score.high { background: #1DB954; color: white; }*/
-        /*.score.mid { background: #2a5c3a; color: #1DB954; }*/
-        /*.score.zero { background: #222; color: #555; }*/
+        .spotify-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1DB954;
+            flex-shrink: 0;
+            transition: background 0.2s, transform 0.15s;
+        }
 
-        {% for artist in matches %}
-            <div class="artist-card">
-                {% set intensity = (artist.score / top_score * 255) | int %}
-                {% if artist.score == 0 %}
-                    <span class="score" style="background:#222; color:#555; border:1px solid #222; padding:4px 14px; border-radius:20px; font-size:13px; font-weight:600;">
-                        no match
-                    </span>
-                {% else %}
-                    <span class="score" style="
-                        background: rgba(29, {{ intensity }}, 84, 0.2);
-                        color: rgb(29, {{ intensity }}, 84);
-                        border: 1px solid rgba(29, {{ intensity }}, 84, 0.4);
-                        padding:4px 14px; border-radius:20px; font-size:13px; font-weight:600;">
-                        {{ artist.score }} pts
-                    </span>
-                {% endif %}
-            </div>
-        {% endfor %}
+        .spotify-btn:hover {
+            background: #1aa34a;
+            transform: scale(1.1);
+        }
+
+        .spotify-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        .spotify-placeholder {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
 
         .back {
             display: inline-block;
             margin-top: 32px;
-            color: #555;
+            color: #444;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .back:hover { color: #1DB954; }
@@ -105,21 +142,54 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎪 Your Matches</h1>
+        <h1>Your Matches</h1>
         <p class="based-on">
-            Based on your top artists:
+            Based on:
             {% for name in top_artists %}
                 <span>{{ name }}{% if not loop.last %}, {% endif %}</span>
             {% endfor %}
         </p>
 
         {% for artist in matches %}
+        {% set intensity = [(artist.score / top_score * 185) | int, 185] | min %}
         <div class="artist-card">
             <span class="rank">#{{ loop.index }}</span>
-            <span class="name">{{ artist.name }}</span>
-            <span class="score {% if artist.score >= 4 %}high{% elif artist.score > 0 %}mid{% else %}zero{% endif %}">
-                {% if artist.score == 0 %}no match{% else %}{{ artist.score }} pts{% endif %}
-            </span>
+
+            <div class="info">
+                <div class="name">{{ artist.name }}</div>
+                {% if artist.matched_genres %}
+                <div class="genre-tags">
+                    {% for genre in artist.matched_genres %}
+                    <span class="genre-tag">{{ genre }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="right">
+                {% if artist.score == 0 %}
+                    <span class="score" style="background:#1a1a1a; color:#444; border:1px solid #2a2a2a;">
+                        no match
+                    </span>
+                {% else %}
+                    <span class="score" style="
+                        background: rgba(29, {{ intensity }}, 84, 0.15);
+                        color: rgb(29, {{ intensity }}, 84);
+                        border: 1px solid rgba(29, {{ intensity }}, 84, 0.3);">
+                        {{ artist.score }} pts
+                    </span>
+                {% endif %}
+
+                {% if artist.spotify_url %}
+                <a href="{{ artist.spotify_url }}" target="_blank" rel="noopener" class="spotify-btn" title="Open in Spotify">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                    </svg>
+                </a>
+                {% else %}
+                <div class="spotify-placeholder"></div>
+                {% endif %}
+            </div>
         </div>
         {% endfor %}
 
