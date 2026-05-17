@@ -38,12 +38,15 @@ def compile_genres(list_of_artists):
     return genres
 
 
-def get_spotify_url(artist_name, sp):
+def get_spotify_info(artist_name, sp):
     try:
         result = sp.search(q=f'artist:"{artist_name}"', type="artist", limit=1)
         items = result["artists"]["items"]
         if items and items[0]["name"].lower() == artist_name.lower():
-            return items[0]["external_urls"]["spotify"]
+            return {
+                "url": items[0]["external_urls"]["spotify"],
+                "id": items[0]["id"],
+            }
     except Exception:
         pass
     return None
@@ -63,12 +66,13 @@ def compare_genres_to_CSV(user_genres, sp=None):
                 score += user_genres.count(genre)
                 if genre not in matched:
                     matched.append(genre)
-        spotify_url = get_spotify_url(artist, sp) if sp else None
+        spotify_info = get_spotify_info(artist, sp) if sp else None
         return {
             "name": artist,
             "score": score,
             "matched_genres": matched[:3],
-            "spotify_url": spotify_url,
+            "spotify_url": spotify_info["url"] if spotify_info else None,
+            "spotify_id": spotify_info["id"] if spotify_info else None,
         }
 
     with ThreadPoolExecutor(max_workers=10) as executor:
