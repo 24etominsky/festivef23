@@ -247,10 +247,16 @@
             btn.disabled = true;
             btn.textContent = 'Creating playlist…';
 
-            const res = await fetch('/create-playlist', { method: 'POST' });
-            const data = await res.json();
-
             const area = document.getElementById('playlist-area');
+            let data;
+            try {
+                const res = await fetch('/create-playlist', { method: 'POST' });
+                data = await res.json();
+            } catch (e) {
+                area.innerHTML = `<p style="color:#e05555; font-size:14px; margin-bottom:28px;">Network error — try again.</p>`;
+                return;
+            }
+
             if (data.playlist_url) {
                 area.innerHTML = `
                     <a href="${data.playlist_url}" target="_blank" rel="noopener" class="playlist-link">
@@ -260,7 +266,8 @@
                         Open Festival Playlist in Spotify
                     </a>`;
             } else {
-                area.innerHTML = `<p style="color:#e05555; font-size:14px; margin-bottom:28px;">Could not create playlist — try again.</p>`;
+                const msg = data.error || 'Could not create playlist — try again.';
+                area.innerHTML = `<p style="color:#e05555; font-size:14px; margin-bottom:28px;">${msg}</p>`;
             }
         }
     </script>

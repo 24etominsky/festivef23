@@ -92,16 +92,20 @@ def create_playlist():
             continue
 
     if not track_uris:
-        return jsonify({"error": "could not fetch tracks"}), 500
+        return jsonify({"error": "Could not fetch tracks — no matched artists had a Spotify profile."}), 500
 
-    user_id = sp.current_user()["id"]
-    playlist = sp.user_playlist_create(
-        user_id,
-        "Festival Picks",
-        public=False,
-        description="Top tracks from your Hinterland matches — made by Festival Match"
-    )
-    sp.playlist_add_items(playlist["id"], track_uris)
+    try:
+        user_id = sp.current_user()["id"]
+        playlist = sp.user_playlist_create(
+            user_id,
+            "Festival Picks",
+            public=False,
+            description="Top tracks from your Hinterland matches — made by Festival Match"
+        )
+        sp.playlist_add_items(playlist["id"], track_uris)
+    except Exception as e:
+        print(f"Playlist creation error: {e}")
+        return jsonify({"error": "Spotify rejected the request — try logging out and back in to grant playlist permissions."}), 500
 
     return jsonify({"playlist_url": playlist["external_urls"]["spotify"]})
 
