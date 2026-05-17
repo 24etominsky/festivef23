@@ -64,9 +64,9 @@ def results():
 
     top_score = matches[0]["score"] if matches else 1
 
-    # Store top 10 artist IDs for playlist creation
-    session["top_artist_ids"] = [
-        m["spotify_id"] for m in matches[:10] if m.get("spotify_id")
+    # Store top 10 matched artist names for playlist creation
+    session["top_artist_names"] = [
+        m["name"] for m in matches[:10] if m["score"] > 0
     ]
 
     return render_template("results.html", matches=matches, top_artists=names, top_score=top_score)
@@ -77,18 +77,24 @@ def create_playlist():
     if not token:
         return jsonify({"error": "not authenticated"}), 401
 
-    artist_ids = session.get("top_artist_ids", [])
-    if not artist_ids:
-        return jsonify({"error": "no artists found"}), 400
+    artist_names = session.get("top_artist_names", [])
+    if not artist_names:
+        return jsonify({"error": "no artists found — try reloading your results first"}), 400
 
     sp = spotipy.Spotify(auth=token["access_token"])
 
     track_uris = []
-    for artist_id in artist_ids:
+    for name in artist_names:
         try:
+            result = sp.search(q=f'artist:"{name}"', type="artist", limit=1)
+            items = result["artists"]["items"]
+            if not items or items[0]["name"].lower() != name.lower():
+                continue
+            artist_id = items[0]["id"]
             tracks = sp.artist_top_tracks(artist_id)["tracks"][:5]
             track_uris.extend([t["uri"] for t in tracks])
-        except Exception:
+        except Exception as e:
+            print(f"Error fetching tracks for {name}: {e}")
             continue
 
     if not track_uris:
