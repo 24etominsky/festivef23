@@ -86,12 +86,8 @@ def create_playlist():
     track_uris = []
     for name in artist_names:
         try:
-            result = sp.search(q=f'artist:"{name}"', type="artist", limit=1)
-            items = result["artists"]["items"]
-            if not items or items[0]["name"].lower() != name.lower():
-                continue
-            artist_id = items[0]["id"]
-            tracks = sp.artist_top_tracks(artist_id)["tracks"][:5]
+            result = sp.search(q=f'artist:"{name}"', type="track", limit=5)
+            tracks = result["tracks"]["items"]
             track_uris.extend([t["uri"] for t in tracks])
         except Exception as e:
             print(f"Error fetching tracks for {name}: {e}")
