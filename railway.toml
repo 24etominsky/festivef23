@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "gunicorn --chdir src app:app --timeout 120 --workers 2 --worker-class gthread --threads 4"
+startCommand = "gunicorn --chdir src app:app --timeout 120 --workers 4 --preload"
