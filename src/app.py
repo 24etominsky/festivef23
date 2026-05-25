@@ -86,12 +86,10 @@ def create_playlist():
 
         track_uris = []
         for name in artist_names:
-            artist_results = sp.search(q=f"artist:{name}", type="artist", limit=1)
-            artists = artist_results["artists"]["items"]
-            if artists:
-                artist_id = artists[0]["id"]
-                top_tracks = sp.artist_top_tracks(artist_id, country="from_token")
-                track_uris.extend(t["uri"] for t in top_tracks["tracks"][:5])
+            track_results = sp.search(q=f"artist:{name}", type="track", limit=10)
+            tracks = track_results["tracks"]["items"]
+            tracks.sort(key=lambda t: t["popularity"], reverse=True)
+            track_uris.extend(t["uri"] for t in tracks[:5])
 
         if track_uris:
             sp.playlist_add_items(playlist["id"], track_uris)
