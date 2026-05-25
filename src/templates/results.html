@@ -235,7 +235,7 @@
     </div>
 
     <script>
-        const matchedArtists = {{ matches | selectattr("score", "gt", 0) | map(attribute="name") | list | tojson }};
+        const matchedArtists = {{ matched_names | tojson }};
 
         async function createPlaylist() {
             const btn = document.getElementById("playlist-btn");

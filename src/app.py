@@ -17,7 +17,7 @@ app.config["SESSION_COOKIE_SECURE"] = True
 
 def get_auth_manager(cache_handler=None):
     return SpotifyOAuth(
-        scope="user-top-read playlist-modify-public user-read-private",
+        scope="user-top-read playlist-modify-public",
         redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
         cache_handler=cache_handler
     )
@@ -60,9 +60,10 @@ def results():
     genres = compile_genres(names)
     matches = compare_genres_to_CSV(genres, sp=sp)
 
-    top_score = matches[0]["score"] if matches else 1
+    top_score = max(matches[0]["score"] if matches else 0, 1)
+    matched_names = [m["name"] for m in matches if m["score"] > 0]
 
-    return render_template("results.html", matches=matches, top_artists=names, top_score=top_score)
+    return render_template("results.html", matches=matches, top_artists=names, top_score=top_score, matched_names=matched_names)
 
 @app.route("/create_playlist", methods=["POST"])
 def create_playlist():
@@ -77,9 +78,7 @@ def create_playlist():
 
     sp = spotipy.Spotify(auth=token["access_token"])
     try:
-        user_id = sp.current_user()["id"]
-        playlist = sp.user_playlist_create(
-            user=user_id,
+        playlist = sp.playlist_create(
             name="Hinterland Festival Matches",
             public=True,
             description="Your personalized Hinterland lineup based on your Spotify taste"
