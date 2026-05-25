@@ -203,9 +203,12 @@ def create_playlist():
 
         track_uris = []
         for name in artist_names:
-            track_results = sp.search(q=f"artist:{name}", type="track", limit=5)
-            tracks = track_results["tracks"]["items"]
-            track_uris.extend(t["uri"] for t in tracks)
+            try:
+                track_results = sp.search(q=f"artist:{name}", type="track", limit=5)
+                tracks = track_results["tracks"]["items"]
+                track_uris.extend(t["uri"] for t in tracks)
+            except Exception:
+                continue
 
         if track_uris:
             sp.playlist_add_items(playlist["id"], track_uris)
