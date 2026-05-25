@@ -34,7 +34,7 @@ def compile_genres(list_of_artists):
 
     genres = []
     for g in results:
-        genres.extend(g)
+        genres.extend(tag for tag in g if "indie" not in tag.lower())
     return genres
 
 
