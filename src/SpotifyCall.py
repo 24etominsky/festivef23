@@ -15,7 +15,7 @@ def get_genres_lastfm(artist_name, api_key):
         "format": "json"
     }
     try:
-        res = requests.get(url, params=params, timeout=5).json()
+        res = requests.get(url, params=params, timeout=2).json()
         tags = [t["name"] for t in res.get("toptags", {}).get("tag", [])]
         return tags[:5]
     except Exception:
