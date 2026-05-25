@@ -32,9 +32,19 @@ def compile_genres(list_of_artists):
     with ThreadPoolExecutor(max_workers=10) as executor:
         results = list(executor.map(fetch, list_of_artists))
 
+    FILTERED = {
+        "seen live", "favorites", "favorite", "love",
+        "pop", "electronic", "alternative", "rock",
+        "female vocalists", "singer-songwriter",
+        "american", "british", "australian", "experimental", "folk",
+    }
+
     genres = []
     for g in results:
-        genres.extend(tag for tag in g if "indie" not in tag.lower())
+        genres.extend(
+            tag for tag in g
+            if "indie" not in tag.lower() and tag.lower() not in FILTERED
+        )
     return genres
 
 
