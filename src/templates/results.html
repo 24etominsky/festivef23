@@ -181,6 +181,13 @@
             {% endfor %}
         </p>
 
+        <div>
+            <button class="playlist-btn" id="playlist-btn" onclick="createPlaylist()">
+                ＋ Create Spotify Playlist
+            </button>
+            <div id="playlist-result"></div>
+        </div>
+
         {% for artist in matches %}
         {% set intensity = [(artist.score / top_score * 185) | int, 185] | min %}
         <div class="artist-card">
@@ -223,13 +230,6 @@
             </div>
         </div>
         {% endfor %}
-
-        <div>
-            <button class="playlist-btn" id="playlist-btn" onclick="createPlaylist()">
-                ＋ Create Spotify Playlist
-            </button>
-            <div id="playlist-result"></div>
-        </div>
 
         <a href="/" class="back">← Back to home</a>
     </div>
