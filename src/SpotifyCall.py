@@ -1,7 +1,6 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
-import pandas as pd
 import requests
 
 load_dotenv()
@@ -59,10 +58,8 @@ def get_spotify_url(artist_name, sp):
     return None
 
 
-def compare_genres_to_CSV(user_genres, sp=None):
+def compare_genres(user_genres, artist_names, sp=None):
     fm_key = os.getenv("FM_API_KEY")
-    df = pd.read_csv(os.path.join(os.path.dirname(__file__), "../festival_lineup.csv"))
-    artist_names = df["Artist Name"].tolist()
 
     def process_artist(artist):
         festival_genres = get_genres_lastfm(artist, fm_key)

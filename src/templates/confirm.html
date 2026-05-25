@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Lineup</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: white;
+            min-height: 100vh;
+            padding: 48px 20px;
+        }
+
+        .container { max-width: 560px; margin: 0 auto; }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1DB954, #69e89b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .field { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #444;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            background: #141414;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: white;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus { border-color: #1DB954; }
+        input[type="text"]::placeholder { color: #444; }
+
+        textarea {
+            resize: vertical;
+            min-height: 320px;
+            line-height: 1.6;
+        }
+
+        .count {
+            font-size: 12px;
+            color: #555;
+            margin-top: 6px;
+        }
+
+        .warning {
+            background: rgba(255, 180, 0, 0.08);
+            border: 1px solid rgba(255, 180, 0, 0.2);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 24px;
+        }
+
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #1DB954;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .submit-btn:hover { background: #1aa34a; transform: scale(1.02); }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #444;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .back:hover { color: #1DB954; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Confirm Lineup</h1>
+        <p class="subtitle">
+            Review the artists extracted from the page. Edit or remove any that don't belong,
+            then give the festival a name and save.
+        </p>
+
+        {% if not artists %}
+        <div class="warning">
+            No artists could be automatically extracted from that page — it may use JavaScript rendering.
+            You can paste the artist names manually below, one per line.
+        </div>
+        {% endif %}
+
+        <form action="/confirm" method="POST">
+            <div class="field">
+                <label>Festival Name</label>
+                <input type="text" name="festival_name" placeholder="e.g. Bonnaroo 2025" required>
+            </div>
+
+            <div class="field">
+                <label>Artists — one per line</label>
+                <textarea name="artists">{% for artist in artists %}{{ artist }}
+{% endfor %}</textarea>
+                {% if artists %}
+                <p class="count">{{ artists|length }} artists extracted</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="submit-btn">Save &amp; Get Results</button>
+        </form>
+
+        <br>
+        <a href="/" class="back">← Back to home</a>
+    </div>
+</body>
+</html>

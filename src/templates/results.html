@@ -173,7 +173,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Your Matches</h1>
+        <h1>{{ festival_name }} Matches</h1>
         <p class="based-on">
             Based on:
             {% for name in top_artists %}
@@ -237,6 +237,7 @@
 
     <script>
         const matchedArtists = {{ matched_names | tojson }};
+        const festivalName = {{ festival_name | tojson }};
 
         async function createPlaylist() {
             const btn = document.getElementById("playlist-btn");
@@ -249,7 +250,7 @@
                 const res = await fetch("/create_playlist", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ artists: matchedArtists })
+                    body: JSON.stringify({ artists: matchedArtists, festival_name: festivalName })
                 });
                 const data = await res.json();
                 if (data.url) {
