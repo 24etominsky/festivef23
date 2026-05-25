@@ -8,6 +8,7 @@ from SpotifyCall import compare_genres_to_CSV, compile_genres, get_spotify_url
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy.cache_handler import MemoryCacheHandler
+from spotipy.exceptions import SpotifyException
 import os
 
 app = Flask(__name__, template_folder="templates")
@@ -56,7 +57,11 @@ def results():
         return redirect("/login")
 
     sp = spotipy.Spotify(auth=token["access_token"])
-    top_artists = sp.current_user_top_artists(limit=50, time_range="medium_term")
+    try:
+        top_artists = sp.current_user_top_artists(limit=50, time_range="medium_term")
+    except SpotifyException:
+        session.clear()
+        return redirect("/login")
     names = [a["name"] for a in top_artists["items"]]
     genres = compile_genres(names)
     matches = compare_genres_to_CSV(genres, sp=sp)

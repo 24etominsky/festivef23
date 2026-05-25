@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "gunicorn --chdir src app:app"
+startCommand = "gunicorn --chdir src app:app --timeout 120 --workers 2"

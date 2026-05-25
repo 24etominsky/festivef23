@@ -29,7 +29,7 @@ def compile_genres(list_of_artists):
     def fetch(artist):
         return get_genres_lastfm(artist, key)
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=3) as executor:
         results = list(executor.map(fetch, list_of_artists))
 
     FILTERED = {
@@ -81,7 +81,7 @@ def compare_genres_to_CSV(user_genres, sp=None):
             "spotify_url": spotify_url,
         }
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=3) as executor:
         results = list(executor.map(process_artist, artist_names))
 
     return sorted(results, key=lambda x: x["score"], reverse=True)
