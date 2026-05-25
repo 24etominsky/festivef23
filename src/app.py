@@ -86,8 +86,12 @@ def index():
 
 @app.route("/login")
 def login():
+    print("login:start", flush=True)
     auth_manager = get_auth_manager()
-    return redirect(auth_manager.get_authorize_url())
+    print("login:auth_manager_created", flush=True)
+    url = auth_manager.get_authorize_url()
+    print("login:url_built", flush=True)
+    return redirect(url)
 
 
 @app.route("/callback")
@@ -218,6 +222,13 @@ def debug():
         "cwd": os.getcwd(),
         "file": __file__,
         "festivals": list_festivals(),
+        "env": {
+            "FLASK_SECRET_KEY": bool(os.getenv("FLASK_SECRET_KEY")),
+            "SPOTIPY_CLIENT_ID": bool(os.getenv("SPOTIPY_CLIENT_ID")),
+            "SPOTIPY_CLIENT_SECRET": bool(os.getenv("SPOTIPY_CLIENT_SECRET")),
+            "SPOTIPY_REDIRECT_URI": os.getenv("SPOTIPY_REDIRECT_URI"),
+            "FM_API_KEY": bool(os.getenv("FM_API_KEY")),
+        },
     })
 
 
