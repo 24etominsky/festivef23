@@ -160,39 +160,5 @@
         <div id="artist-list"></div>
     </div>
 
-    <div id="loading-view" style="display:none;" class="container">
-        <div class="logo">🎵</div>
-        <p class="loading">Analyzing your taste...</p>
-    </div>
-
-    <script>
-        async function loadResults() {
-            const res = await fetch('/results');
-            if (!res.ok) return;
-
-            document.getElementById('login-view').style.display = 'none';
-            document.getElementById('loading-view').style.display = 'block';
-
-            const data = await res.json();
-
-            document.getElementById('loading-view').style.display = 'none';
-            document.getElementById('results-view').style.display = 'block';
-
-            const list = document.getElementById('artist-list');
-            data.matches.forEach((match, i) => {
-                const [name, score] = match.split(':');
-                const card = document.createElement('div');
-                card.className = 'artist-card';
-                card.innerHTML = `
-                    <span class="artist-rank">#${i + 1}</span>
-                    <span class="artist-name">${name}</span>
-                    <span class="artist-score ${score === '0' ? 'zero' : ''}">${score} pts</span>
-                `;
-                list.appendChild(card);
-            });
-        }
-
-        loadResults();
-    </script>
 </body>
 </html>
