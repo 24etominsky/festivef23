@@ -187,6 +187,7 @@
             </button>
             <div id="playlist-result"></div>
         </div>
+        <br>
 
         {% for artist in matches %}
         {% set intensity = [(artist.score / top_score * 185) | int, 185] | min %}
