@@ -61,7 +61,7 @@ def results():
     matches = compare_genres_to_CSV(genres, sp=sp)
 
     top_score = max(matches[0]["score"] if matches else 0, 1)
-    matched_names = [m["name"] for m in matches if m["score"] > 0]
+    matched_names = [m["name"] for m in matches if m["score"] > 0][:10]
 
     return render_template("results.html", matches=matches, top_artists=names, top_score=top_score, matched_names=matched_names)
 
@@ -86,10 +86,12 @@ def create_playlist():
 
         track_uris = []
         for name in artist_names:
-            results = sp.search(q=f"artist:{name}", type="track", limit=1)
-            tracks = results["tracks"]["items"]
-            if tracks:
-                track_uris.append(tracks[0]["uri"])
+            artist_results = sp.search(q=f"artist:{name}", type="artist", limit=1)
+            artists = artist_results["artists"]["items"]
+            if artists:
+                artist_id = artists[0]["id"]
+                top_tracks = sp.artist_top_tracks(artist_id, country="from_token")
+                track_uris.extend(t["uri"] for t in top_tracks["tracks"][:5])
 
         if track_uris:
             sp.playlist_add_items(playlist["id"], track_uris)
