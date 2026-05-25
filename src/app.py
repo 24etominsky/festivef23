@@ -78,7 +78,7 @@ def create_playlist():
 
     sp = spotipy.Spotify(auth=token["access_token"])
     try:
-        playlist = sp.playlist_create(
+        playlist = sp.current_user_playlist_create(
             name="Hinterland Festival Matches",
             public=True,
             description="Your personalized Hinterland lineup based on your Spotify taste"
