@@ -70,15 +70,20 @@ def compare_genres(user_genres, artist_names, sp=None):
                 score += user_genres.count(genre)
                 if genre not in matched:
                     matched.append(genre)
-        spotify_url = get_spotify_url(artist, sp) if sp else None
         return {
             "name": artist,
             "score": score,
             "matched_genres": matched[:3],
-            "spotify_url": spotify_url,
+            "spotify_url": None,
         }
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         results = list(executor.map(process_artist, artist_names))
 
-    return sorted(results, key=lambda x: x["score"], reverse=True)
+    sorted_results = sorted(results, key=lambda x: x["score"], reverse=True)
+
+    if sp:
+        for item in sorted_results[:10]:
+            item["spotify_url"] = get_spotify_url(item["name"], sp)
+
+    return sorted_results

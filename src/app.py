@@ -123,7 +123,7 @@ def results(festival_slug):
     if not os.path.exists(csv_path):
         return redirect("/")
 
-    sp = spotipy.Spotify(auth=token["access_token"])
+    sp = spotipy.Spotify(auth=token["access_token"], retries=0, requests_timeout=5)
     try:
         top_artists = sp.current_user_top_artists(limit=50, time_range="medium_term")
     except SpotifyException:
@@ -193,7 +193,7 @@ def create_playlist():
     if not artist_names:
         return jsonify({"error": "No artists provided"}), 400
 
-    sp = spotipy.Spotify(auth=token["access_token"])
+    sp = spotipy.Spotify(auth=token["access_token"], retries=0, requests_timeout=5)
     try:
         playlist = sp.current_user_playlist_create(
             name=f"{festival_name} Matches",
