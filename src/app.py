@@ -7,6 +7,7 @@ from SpotifyCall import compare_genres_to_CSV, compile_genres, get_spotify_url
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+from spotipy.cache_handler import MemoryCacheHandler
 import os
 
 app = Flask(__name__, template_folder="templates")
@@ -15,11 +16,11 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY")
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = True
 
-def get_auth_manager(cache_handler=None):
+def get_auth_manager():
     return SpotifyOAuth(
         scope="user-top-read playlist-modify-public",
         redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
-        cache_handler=cache_handler
+        cache_handler=MemoryCacheHandler()
     )
 
 @app.route("/")
