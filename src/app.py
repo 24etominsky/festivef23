@@ -17,14 +17,14 @@ app.config["SESSION_COOKIE_SECURE"] = True
 
 def get_auth_manager(cache_handler=None):
     return SpotifyOAuth(
-        scope="user-top-read",
+        scope="user-top-read playlist-modify-public user-read-private",
         redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
         cache_handler=cache_handler
     )
 
 @app.route("/")
 def index():
-    return render_template("templates/index.html")
+    return render_template("index.html")
 
 @app.route("/login")
 def login():
@@ -63,6 +63,45 @@ def results():
     top_score = matches[0]["score"] if matches else 1
 
     return render_template("results.html", matches=matches, top_artists=names, top_score=top_score)
+
+@app.route("/create_playlist", methods=["POST"])
+def create_playlist():
+    token = session.get("token")
+    if not token:
+        return jsonify({"error": "Not authenticated"}), 401
+
+    data = request.get_json()
+    artist_names = data.get("artists", [])
+    if not artist_names:
+        return jsonify({"error": "No artists provided"}), 400
+
+    sp = spotipy.Spotify(auth=token["access_token"])
+    try:
+        user_id = sp.current_user()["id"]
+        playlist = sp.user_playlist_create(
+            user=user_id,
+            name="Hinterland Festival Matches",
+            public=True,
+            description="Your personalized Hinterland lineup based on your Spotify taste"
+        )
+
+        track_uris = []
+        for name in artist_names:
+            results = sp.search(q=f"artist:{name}", type="artist", limit=1)
+            artists = results["artists"]["items"]
+            if artists:
+                artist_id = artists[0]["id"]
+                top_tracks = sp.artist_top_tracks(artist_id)
+                if top_tracks["tracks"]:
+                    track_uris.append(top_tracks["tracks"][0]["uri"])
+
+        if track_uris:
+            sp.playlist_add_items(playlist["id"], track_uris)
+
+        return jsonify({"url": playlist["external_urls"]["spotify"]})
+    except Exception as e:
+        print(f"Playlist error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/debug")
 def debug():

@@ -138,6 +138,37 @@
         }
 
         .back:hover { color: #1DB954; }
+
+        .playlist-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 28px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .playlist-btn:hover { background: #1aa34a; transform: scale(1.03); }
+        .playlist-btn:disabled { background: #333; color: #666; cursor: default; transform: none; }
+
+        .playlist-link {
+            display: inline-block;
+            margin-top: 16px;
+            color: #1DB954;
+            font-size: 15px;
+            text-decoration: none;
+        }
+
+        .playlist-link:hover { text-decoration: underline; }
+
+        .playlist-error { color: #e05; margin-top: 12px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -193,7 +224,47 @@
         </div>
         {% endfor %}
 
+        <div>
+            <button class="playlist-btn" id="playlist-btn" onclick="createPlaylist()">
+                ＋ Create Spotify Playlist
+            </button>
+            <div id="playlist-result"></div>
+        </div>
+
         <a href="/" class="back">← Back to home</a>
     </div>
+
+    <script>
+        const matchedArtists = {{ matches | selectattr("score", "gt", 0) | map(attribute="name") | list | tojson }};
+
+        async function createPlaylist() {
+            const btn = document.getElementById("playlist-btn");
+            const result = document.getElementById("playlist-result");
+            btn.disabled = true;
+            btn.textContent = "Creating playlist…";
+            result.innerHTML = "";
+
+            try {
+                const res = await fetch("/create_playlist", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ artists: matchedArtists })
+                });
+                const data = await res.json();
+                if (data.url) {
+                    result.innerHTML = `<a class="playlist-link" href="${data.url}" target="_blank">✓ Open playlist in Spotify →</a>`;
+                    btn.textContent = "Playlist created!";
+                } else {
+                    result.innerHTML = `<p class="playlist-error">Error: ${data.error || "Unknown error"}</p>`;
+                    btn.disabled = false;
+                    btn.textContent = "＋ Create Spotify Playlist";
+                }
+            } catch (e) {
+                result.innerHTML = `<p class="playlist-error">Request failed. Try logging in again.</p>`;
+                btn.disabled = false;
+                btn.textContent = "＋ Create Spotify Playlist";
+            }
+        }
+    </script>
 </body>
 </html>
