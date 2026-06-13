@@ -81,7 +81,7 @@ def parse_lineup_url(url):
 
 @app.route("/")
 def index():
-    return render_template("index.html", festivals=list_festivals())
+    return render_template("index.html")
 
 
 @app.route("/login")
