@@ -12,12 +12,19 @@
             background: #0a0a0a;
             color: white;
             min-height: 100vh;
-            padding: 48px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .container { max-width: 600px; margin: 0 auto; }
+        .container {
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
 
-        .logo { font-size: 40px; margin-bottom: 12px; }
+        .logo { font-size: 56px; margin-bottom: 20px; }
 
         h1 {
             font-size: 42px;
@@ -25,103 +32,47 @@
             background: linear-gradient(135deg, #1DB954, #69e89b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 15px;
-            margin-bottom: 40px;
-        }
-
-        .section-label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: #444;
             margin-bottom: 12px;
         }
 
-        .festival-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 10px;
-            margin-bottom: 40px;
-        }
-
-        .festival-card {
-            display: block;
-            background: #141414;
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 18px 16px;
-            text-decoration: none;
-            color: white;
-            transition: border-color 0.2s, background 0.2s;
-        }
-
-        .festival-card:hover {
-            border-color: #1DB954;
-            background: #181818;
-        }
-
-        .festival-card-name {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .festival-card-count {
-            font-size: 12px;
+        .subtitle {
             color: #555;
+            font-size: 15px;
+            margin-bottom: 48px;
+            line-height: 1.5;
         }
 
-        .divider {
-            border: none;
-            border-top: 1px solid #1a1a1a;
-            margin: 36px 0;
-        }
-
-        .url-form {
-            display: flex;
-            gap: 10px;
-        }
-
-        .url-input {
-            flex: 1;
-            background: #141414;
-            border: 1px solid #222;
-            border-radius: 10px;
-            padding: 12px 14px;
-            color: white;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .url-input::placeholder { color: #444; }
-        .url-input:focus { border-color: #1DB954; }
-
-        .parse-btn {
+        .login-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
             background: #1DB954;
             color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s;
+            text-decoration: none;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            transition: background 0.2s, transform 0.15s;
         }
 
-        .parse-btn:hover { background: #1aa34a; }
+        .login-btn:hover {
+            background: #1aa34a;
+            transform: scale(1.04);
+        }
+
+        .login-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+            flex-shrink: 0;
+        }
 
         .footer {
-            margin-top: 48px;
-            color: #333;
-            font-size: 13px;
+            margin-top: 40px;
+            color: #2a2a2a;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -129,29 +80,16 @@
     <div class="container">
         <div class="logo">🎪</div>
         <h1>Festival Match</h1>
-        <p class="subtitle">See which festival artists match your Spotify taste</p>
+        <p class="subtitle">See which Hinterland artists match your Spotify taste</p>
 
-        {% if festivals %}
-        <p class="section-label">Choose a festival</p>
-        <div class="festival-grid">
-            {% for f in festivals %}
-            <a href="/results/{{ f.slug }}" class="festival-card">
-                <div class="festival-card-name">{{ f.name }}</div>
-                <div class="festival-card-count">{{ f.count }} artists</div>
-            </a>
-            {% endfor %}
-        </div>
-        {% endif %}
+        <a href="/login" class="login-btn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            Connect with Spotify
+        </a>
 
-        <hr class="divider">
-
-        <p class="section-label">Add a festival from a URL</p>
-        <form action="/parse" method="POST" class="url-form">
-            <input type="url" name="url" class="url-input" placeholder="https://festival.com/lineup" required>
-            <button type="submit" class="parse-btn">Parse Lineup</button>
-        </form>
-
-        <p class="footer">Clicking a festival will prompt you to connect Spotify if needed</p>
+        <p class="footer">Hinterland 2023</p>
     </div>
 </body>
 </html>
